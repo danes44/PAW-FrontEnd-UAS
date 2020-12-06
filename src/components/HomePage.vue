@@ -86,7 +86,7 @@
               <b-dropdown-item href="#" class="text-center"
                 >Edit Profile</b-dropdown-item
               >
-              <b-dropdown-item href="#" class="text-center text-danger"
+              <b-dropdown-item href="#" @click="logout" class="text-center text-danger"
                 >Sign Out</b-dropdown-item
               >
             </b-nav-item-dropdown>

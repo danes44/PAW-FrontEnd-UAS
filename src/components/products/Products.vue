@@ -45,39 +45,39 @@
             <b-nav-item-dropdown right v-else>
               <template #button-content>
                 <b-img
-                v-if="id===null"
+                  v-if="id === null"
                   src="../../assets/avatar.png"
                   width="30"
                   left
                   class="mr-2"
                 ></b-img>
                 <b-img
-                v-else
+                  v-else
                   :src="'http://127.0.0.1:8000' + form.image"
                   width="30"
                   left
                   class="mr-2"
                 ></b-img>
-                {{form.name}}
+                {{ form.name }}
               </template>
               <b-dropdown-group>
                 <b-dropdown-item href="/profile" class="text-center">
                   <b-img
-                  v-if="id ===null"
+                    v-if="id === null"
                     src="../../assets/avatar.png"
                     width="60"
                     class="my-2 rounded-circle align-items-center"
                   ></b-img>
-                    <b-img
+                  <b-img
                     v-else
                     :src="'http://127.0.0.1:8000' + form.image"
                     width="60"
                     class="my-2 rounded-circle align-items-center"
                   ></b-img>
                   <h6 class="text-center font-weight-bold">
-                    {{form.name}}
+                    {{ form.name }}
                   </h6>
-                  <p>{{form.email}}</p>
+                  <p>{{ form.email }}</p>
                 </b-dropdown-item>
               </b-dropdown-group>
               <b-dropdown-item href="/cart" class="text-center"
@@ -86,7 +86,7 @@
               <b-dropdown-item href="#" class="text-center"
                 >Edit Profile</b-dropdown-item
               >
-              <b-dropdown-item href="#" class="text-center text-danger"
+              <b-dropdown-item href="#" @click="logout" class="text-center text-danger"
                 >Sign Out</b-dropdown-item
               >
             </b-nav-item-dropdown>
@@ -106,14 +106,16 @@
             sm="6"
             cols="12"
             class="mb-4"
-            v-for="food in foods"
-            :key="food.name"
+            v-for="product in products"
+            :key="product.nama_product"
           >
+          <!-- Gambar Product masih ambil dari local host -->
             <b-card
               class="h-100 no-gutters border-0 shadow rounded overflow-hidden mr-0"
-              v-bind:img-src="require('../../assets/' + food.image)"
+              v-bind:img-src="'http://127.0.0.1:8000' + product.gambar_product"
               style="max-width: 255px"
             >
+             <!-- v-bind:img-src="require('../../assets/' + food.image)" -->
               <b-link
                 to="/detail-product"
                 class="stretched-link"
@@ -121,9 +123,9 @@
               >
                 <b-card-body class="p-0">
                   <b-card-text>
-                    <h6 class="font-weight-bold">{{ food.name }}</h6>
-                    <h6 class="font-weight-bold">Rp. {{ food.price }}</h6>
-                    Stok : {{ food.stock }}
+                    <h6 class="font-weight-bold">{{ product.nama_product }}</h6>
+                    <h6 class="font-weight-bold">Rp. {{ product.harga_product }}</h6>
+                    Stok : {{ product.stok_product }}
                   </b-card-text>
                 </b-card-body>
               </b-link>
@@ -216,6 +218,8 @@ export default {
           image: "Group 617.png",
         },
       ],
+      product: new FormData(),
+      products: [],
       user: new FormData(),
       users: [],
       form: {
@@ -249,6 +253,17 @@ export default {
           this.form.email = this.users.email;
           this.form.image = this.users.image;
         });
+    },
+    readData() {
+      var url = this.$api + '/product'
+      this.$http.get(url, {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      }).then(response => {
+        this.products = response.data.data
+        console.log(this.products);
+      })
     },
     logout() {
       //sementara gini dlu method post logoutnya aneh :3
@@ -292,6 +307,7 @@ export default {
   },
   mounted() {
     this.readDataUser();
+    this.readData()
   },
 };
 </script>
@@ -324,5 +340,4 @@ export default {
 ::v-deep .dropdown-item:hover {
   background-color: #dcdeec !important;
 }
-
 </style>
