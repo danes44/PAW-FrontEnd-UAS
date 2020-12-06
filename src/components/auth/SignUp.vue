@@ -39,13 +39,13 @@
           </b-row>
 
           <!--          SIGN UP FORM     -->
-          <b-form class="px-5 pt-5">
+          <b-form class="px-5 pt-5" @submit="makeToast" >
             <b-form-row class="mb-3">
-              <b-input-group>
+              <b-input-group  >
                 <b-input-group-prepend is-text class="text">
                   <b-icon icon="person-fill"></b-icon>
                 </b-input-group-prepend>
-                <b-form-input placeholder="Full Name"></b-form-input>
+                <b-form-input placeholder="Full Name" required class="was-validated"></b-form-input>
               </b-input-group>
             </b-form-row>
 
@@ -54,7 +54,7 @@
                 <b-input-group-prepend is-text class="text">
                   <b-icon icon="envelope-fill"></b-icon>
                 </b-input-group-prepend>
-                <b-form-input type="email" placeholder="Email"></b-form-input>
+                <b-form-input type="email" placeholder="Email" required></b-form-input>
               </b-input-group>
             </b-form-row>
 
@@ -65,7 +65,7 @@
                   <b-input-group-prepend is-text class="text">
                     <b-icon icon="lock-fill"></b-icon>
                   </b-input-group-prepend>
-                  <b-form-input type="password"  placeholder="Password" minlength="9"></b-form-input>
+                  <b-form-input type="password" placeholder="Password" minlength="6" required></b-form-input>
                 </b-input-group>
               </b-col>
 
@@ -74,7 +74,7 @@
                   <b-input-group-prepend is-text class="text">
                     <b-icon icon="telephone-fill"></b-icon>
                   </b-input-group-prepend>
-                  <b-form-input type="text"  placeholder="08XXXXXXXXXX" pattern="^08[0-9]{8,10}" minlength="9" maxlength="13"></b-form-input>
+                  <b-form-input type="text"  placeholder="08XXXXXXXXXX" pattern="^08[0-9]{8,10}" minlength="9" maxlength="13" required></b-form-input>
                 </b-input-group>
               </b-col>
             </b-form-row>
@@ -305,7 +305,7 @@
             </b-form-row>
 
             <b-form-row class="pt-2">
-              <b-button class="py-2 font-weight-bold border-0" block style="background-color: #151D65; border-radius: .5rem;">Sign Up</b-button>
+              <b-button type="submit" class="py-2 font-weight-bold border-0" block style="background-color: #151D65; border-radius: .5rem;">Sign Up</b-button>
             </b-form-row>
 
             <b-form-row class="pt-2 pb-5">
@@ -334,7 +334,25 @@
 
 <script>
   export default {
-    name: "SignUp"
+    name: "SignUp",
+    data(){
+      return{
+
+      }
+    },
+    methods:{
+      makeToast() {
+        this.$bvToast.toast('Please verify your email. We have sent an email to you.', {
+          title: `LOGIN SUCCESS`,
+          variant: 'success',
+          toaster: 'b-toaster-top-center',
+          solid: true,
+          headerClass : 'text-center',
+          bodyClass : 'text-center'
+        })
+        this.$router.push({path:"/login"})
+      }
+    }
   }
 </script>
 

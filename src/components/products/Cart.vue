@@ -62,9 +62,9 @@
                     Rp. {{ formatPrice(data.value) }}
                   </template>
                   <template #cell(quantity)="data" >
-<!--                    <b-col md="6" sm="2">-->
-                      <b-form-input class="mr-n5 border-0" type="number" v-model="data.value" ></b-form-input>
-<!--                    </b-col>-->
+<!--                    <b-button @click="plus" class="py-1 px-1 border-0"><b-icon icon="caret-up-fill"></b-icon></b-button>-->
+                    <b-form-input class="mr-n5 border-0" type="number" v-model="data.item.quantity" min="1" v-bind:max="data.item.stock"></b-form-input>
+<!--                    <b-button @click="minus(data.value)" class="py-1 px-1 border-0"><b-icon icon="caret-down-fill"></b-icon></b-button>-->
                   </template>
                   <template #cell(totalPrice)="data" >
                     <div hidden> {{ data.value = data.item.price * data.item.quantity }} </div>
@@ -72,8 +72,8 @@
                     Rp. {{ formatPrice(data.value) }}
                   </template>
                   <template #cell(actions)="row">
-                    <b-button id="btnDelete" variant="outline-danger" size="sm" @click="delete(row.item, row.index, $event.target)" class="mr-1">
-                      <b-icon icon="x" class="text-danger"></b-icon>
+                    <b-button id="btnDelete" variant="outline-danger" size="sm" @click="deleteProduct(row.index)" class="mr-1">
+                      <b-icon icon="x" class="text-danger" ></b-icon>
                     </b-button>
                   </template>
 <!--                  <template #cell(new)="data">-->
@@ -117,7 +117,7 @@
                   <b>Total Order</b>
                 </b-col>
                 <b-col md="3" sm="12" class="pr-5 pb-3">
-                  <b>Rp. {{ this.shipping+this.tax+this.subtotal }}</b>
+                  <b>Rp. {{ this.totalOrder }}</b>
                 </b-col>
                 <b-col md="6" sm="12" class="">
                   <b-button @click="checkPayment" type="submit" class="float-right py-2 px-4 btn-primary border-0 font-weight-bold" style="background-color:#151D65;border-radius: .5rem; ">Checkout</b-button>
@@ -292,8 +292,8 @@
           { key: 'actions' },
         ],
         foods:[
-          { name: 'Champs Chicken Ball', price: 200000, quantity: 2, totalPrice: 0, new:0 },
-          { name: 'Fiesta Chicken Nuggets', price: 40000, quantity: 3, totalPrice: 0, new:0 },
+          { name: 'Champs Chicken Ball', price: 20000, quantity: 2, totalPrice: 0, stock:23 },
+          { name: 'Fiesta Chicken Nuggets', price: 40000, quantity: 3, totalPrice: 0, stock:52 },
         ],
         selectedRadio:'visa',
         optionsPayment:[
@@ -370,9 +370,16 @@
         subtotal: 0,
         shipping: 0,
         tax: 0,
+        totalOrder: 0,
         totalArr:[],
         dateExpired: null,
       }
+    },
+    mounted:function(){
+      this.makeToast() //method will execute at pageload
+    },
+    watch:{
+
     },
     methods: {
       formatPrice(value) {
@@ -383,7 +390,7 @@
         var i = 0
         while (i<this.foods.length)
         {
-          this.foods.totalPrice = this.foods.price * this.foods.quantity
+          this.foods.totalPrice[i] = this.foods.price * this.foods.quantity
           this.totalArr.push({items: this.foods.totalPrice[i]})
         }
         console.log(this.foods.length)
@@ -405,6 +412,37 @@
         else
           this.shipping = 0
       },
+      deleteProduct(index) {
+        console.log(index)
+        this.$delete(this.foods,index)
+      },
+      quantityChange(value){
+        this.foods.quantity = value
+        this.foods.totalPrice = this.foods.quantity * this.foods.price
+      },
+      plus(){
+        if(this.foods.stock>this.quantity)
+        {
+          this.foods.quantity++
+        }
+      },
+      minus(value){
+        if (value>1)
+        {
+          value--
+          this.foods.quantity--
+        }
+      },
+      makeToast(){
+        this.$bvToast.toast('Your Product Has Added To Cart', {
+          title: `ADD SUCCESS`,
+          variant: 'success',
+          toaster: 'b-toaster-top-center',
+          solid: true,
+          headerClass : 'text-center',
+          bodyClass : 'text-center'
+        })
+      }
     },
   }
 </script>

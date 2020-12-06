@@ -32,9 +32,9 @@
                   <p>frumentius44@gmail.com</p>
                 </b-dropdown-item>
               </b-dropdown-group>
-              <b-dropdown-item href="#" class="text-center">Cart</b-dropdown-item>
-              <b-dropdown-item href="#" class="text-center">Edit Profile</b-dropdown-item>
-              <b-dropdown-item href="#" class="text-center text-danger">Sign Out</b-dropdown-item>
+              <b-dropdown-item to="/cart" class="text-center">Cart</b-dropdown-item>
+              <b-dropdown-item to="#" class="text-center">Edit Profile</b-dropdown-item>
+              <b-dropdown-item to="#" class="text-center text-danger">Sign Out</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
@@ -87,7 +87,7 @@
               </b-row>
 
               <b-row>
-                <b-button @click="cekAmount" to="" class="px-5 py-3 border-0 font-weight-bold" style="background-color: #151D65;border-radius: .5rem">
+                <b-button @click="makeToast" to="" class="px-5 py-3 border-0 font-weight-bold" style="background-color: #151D65;border-radius: .5rem">
                   <b-icon icon="cart-plus-fill" class="mr-3"></b-icon>
                   Add to Cart
                 </b-button>
@@ -151,6 +151,17 @@
         if (this.quantity>1)
           this.quantity--
       },
+      makeToast(){
+        this.$bvToast.toast('Your Product Has Added To Cart', {
+          title: `ADD SUCCESS`,
+          variant: 'success',
+          toaster: 'b-toaster-top-center',
+          solid: true,
+          headerClass : 'text-center',
+          bodyClass : 'text-center'
+        })
+        this.cekAmount()
+      }
     }
   }
 </script>

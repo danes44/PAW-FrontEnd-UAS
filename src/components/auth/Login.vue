@@ -35,13 +35,13 @@
           </b-row>
 
           <!--          SIGN IN FORM     -->
-          <b-form class="px-5 pt-5">
+          <b-form class="px-5 pt-5" @submit="makeToast" >
             <b-form-row class="mb-3">
               <b-input-group >
                 <b-input-group-prepend is-text class="text">
                   <b-icon icon="envelope-fill"></b-icon>
                 </b-input-group-prepend>
-                <b-form-input type="email" placeholder="Email" ></b-form-input>
+                <b-form-input type="email" placeholder="Email" required></b-form-input>
               </b-input-group>
             </b-form-row>
 
@@ -50,7 +50,7 @@
                 <b-input-group-prepend is-text class="text">
                   <b-icon icon="lock-fill"></b-icon>
                 </b-input-group-prepend>
-                <b-form-input type="password" placeholder="Password"></b-form-input>
+                <b-form-input type="password" placeholder="Password" minlength="6" required></b-form-input>
               </b-input-group>
             </b-form-row>
 
@@ -62,25 +62,6 @@
               <p>You don't have an account? <b-link to="/signup" style="text-decoration: none"><b>Sign Up</b></b-link></p>
             </b-form-row>
           </b-form>
-
-<!--            <b-form>-->
-<!--              <div>-->
-<!--                <div class="form-group" :class="{ 'form-group&#45;&#45;error': $v.email.$error }">-->
-<!--                  <label class="form__label">Name</label>-->
-<!--                  <input class="form__input" v-model.trim="$v.email.$model"/>-->
-<!--                </div>-->
-<!--                <div class="error" v-if="!$v.email.required">Field is required</div>-->
-<!--                <div class="error" v-if="!$v.email.minLength">Name must have at least {{$v.email.$params.minLength}} letters.</div>-->
-<!--                <tree-view :data="$v.email" :options="{rootObjectKey: '$v.email', maxDepth: 2}"></tree-view>-->
-<!--                <div class="form-group" :class="{ 'form-group&#45;&#45;error': $v.password.$error }">-->
-<!--                  <label class="form__label">Age</label>-->
-<!--                  <input class="form__input" v-model.trim.lazy="$v.password.$model"/>-->
-<!--                </div>-->
-<!--                <div class="error" v-if="!$v.password.between">Must be between {{$v.password.$params.between}} and {{$v.password.$params.between}}</div>-->
-<!--                <span tabindex="0">Blur to see changes</span>-->
-
-<!--              </div>-->
-<!--            </b-form>-->
         </b-card>
       </div>
     </b-container>
@@ -102,8 +83,6 @@
 </template>
 
 <script>
-  import required from 'vuelidate/lib/validators/required'
-  import minLength from 'vuelidate/lib/validators/minLength'
 
   export default {
     name: "Login",
@@ -115,6 +94,16 @@
       }
     },
     methods:{
+      makeToast() {
+        this.$bvToast.toast('Happy Shopping!', {
+          title: `LOGIN SUCCESS`,
+          variant: 'success',
+          toaster: 'b-toaster-top-center',
+          solid: true,
+          headerClass : 'text-center',
+          bodyClass : 'text-center'
+        })
+      }
       // submit() {
       //   console.log('submit!')
       //   this.$v.$touch()
@@ -129,14 +118,7 @@
       //   }
       // }
     },
-    validations: {
-      email: {
-        required : required,
-      },
-      password: {
-        minLength: minLength(6)
-      }
-    },
+
   }
 </script>
 

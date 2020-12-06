@@ -168,11 +168,11 @@
         this.resetModal()
         this.$bvModal.hide("modalPassword")
       },
-      checkFormValidity() {
-        const valid = this.$refs.form.checkValidity()
-        this.state = valid
-        return valid
-      },
+      // checkFormValidity() {
+      //   const valid = this.$refs.form.checkValidity()
+      //   this.state = valid
+      //   return valid
+      // },
       resetModal() {
         this.oldPassword = ''
         this.newPassword = ''
@@ -186,15 +186,16 @@
       },
       handleSubmit() {
         // Exit when the form isn't valid
-        if (!this.checkFormValidity()) {
-          return
-        }
+        // if (!this.checkFormValidity()) {
+        //   return
+        // }
         this.resetModal()
         // Push the name to submitted names
         this.password = this.newPassword
+        console.log(this.password)
         // Hide the modal manually
         this.$nextTick(() => {
-          this.$bvModal.hide('modalPassword')
+          // this.$bvModal.hide('modalPassword')
         })
       }
     }
