@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar class="p-4" toggleable="lg" type="light" variant="info" sticky>
+    <b-navbar class="p-4" toggleable="lg" type="light" variant="info" sticky v-b-scrollspy="{offset:100, method:'auto'}">
       <b-container>
         <b-navbar-brand href="#"
           ><img

@@ -37,39 +37,39 @@
             <b-nav-item-dropdown right>
               <template #button-content>
                 <b-img
-                v-if="id===null"
+                  v-if="id === null"
                   src="../../assets/avatar.png"
                   width="30"
                   left
                   class="mr-2"
                 ></b-img>
-                  <b-img
+                <b-img
                   v-else
                   :src="'http://127.0.0.1:8000' + form.image"
                   width="30"
                   left
                   class="mr-2"
                 ></b-img>
-                {{form.name}}
+                {{ form.name }}
               </template>
               <b-dropdown-group>
                 <b-dropdown-item to="/profile" class="text-center">
                   <b-img
-                  v-if="id===null"
+                    v-if="id === null"
                     src="../../assets/avatar.png"
                     width="60"
                     class="my-2 rounded-circle align-items-center"
                   ></b-img>
                   <b-img
-                  v-else
-                   :src="'http://127.0.0.1:8000' + form.image"
+                    v-else
+                    :src="'http://127.0.0.1:8000' + form.image"
                     width="60"
                     class="my-2 rounded-circle align-items-center"
                   ></b-img>
                   <h6 class="text-center font-weight-bold">
-                    {{form.name}}
+                    {{ form.name }}
                   </h6>
-                  <p>{{form.email}}</p>
+                  <p>{{ form.email }}</p>
                 </b-dropdown-item>
               </b-dropdown-group>
               <b-dropdown-item href="/cart" class="text-center"
@@ -78,7 +78,10 @@
               <b-dropdown-item href="#" class="text-center"
                 >Edit Profile</b-dropdown-item
               >
-              <b-dropdown-item href="#" @click="logout" class="text-center text-danger"
+              <b-dropdown-item
+                href="#"
+                @click="logout"
+                class="text-center text-danger"
                 >Sign Out</b-dropdown-item
               >
             </b-nav-item-dropdown>
@@ -95,7 +98,7 @@
         >
           <div class="d-flex flex-wrap">
             <b-img
-             :src="'http://127.0.0.1:8000'+form.image" 
+              :src="'http://127.0.0.1:8000' + form.image"
               width="200"
               class="mr-3 rounded-circle"
               v-if="form.image != null"
@@ -141,39 +144,76 @@
 
     <b-modal
       id="modalPassword"
+      modal-class="border-0 rounded"
       ref="modal"
-      title="Submit Your Name"
-      @show="resetModal"
-      @hidden="resetModal"
-      @ok="handleOk"
+      hide-header
+      hide-footer
     >
-      <b-form ref="form" @submit.stop.prevent="handleSubmit">
-        <b-form-group
-          :state="state"
-          invalid-feedback="Old Password is Required"
-        >
-          <b-form-input
-            id="name-input"
-            v-model="oldPassword"
+      <div class="px-4">
+        <h3 class="py-5 text-center"><b>Change Password</b></h3>
+        <b-form ref="form" @submit.stop.prevent="handleSubmit">
+          <b-form-group
             :state="state"
-            min="6"
-            required
-          ></b-form-input>
-        </b-form-group>
+            invalid-feedback="Old password is required"
+            class="pb-1 border-0"
+          >
+            <b-input-group class="">
+              <b-input-group-prepend is-text class="text">
+                <b-icon icon="lock-fill"></b-icon>
+              </b-input-group-prepend>
+              <b-form-input
+                placeholder="Old Password"
+                v-model="oldPassword"
+                :state="state"
+                min="6"
+                required
+                type="password"
+                class="border-0"
+              ></b-form-input>
+            </b-input-group>
+          </b-form-group>
 
-        <b-form-group
-          :state="state"
-          invalid-feedback="New Password is Required"
-        >
-          <b-form-input
-            id="name-input"
-            v-model="newPassword"
+          <b-form-group
             :state="state"
-            min="6"
-            required
-          ></b-form-input>
-        </b-form-group>
-      </b-form>
+            invalid-feedback="New password is required"
+          >
+            <b-input-group>
+              <b-input-group-prepend is-text class="text">
+                <b-icon icon="lock-fill"></b-icon>
+              </b-input-group-prepend>
+              <b-form-input
+                placeholder="New Password"
+                v-model="newPassword"
+                :state="state"
+                min="6"
+                required
+                type="password"
+              ></b-form-input>
+            </b-input-group>
+          </b-form-group>
+
+          <b-form-row class="pt-5 pb-3 float-right">
+            <b-button
+              @click="hideModal"
+              class="cancel text-center py-2 px-5 border-0 font-weight-bold"
+              style="
+                background-color: white;
+                text-decoration: none;
+                color: #151d65;
+              "
+            >
+              Cancel
+            </b-button>
+            <b-button
+              @click="handleOk"
+              class="text-center py-2 px-5 font-weight-bold"
+              style="background-color: #151d65; border-radius: 0.5rem"
+            >
+              Save
+            </b-button>
+          </b-form-row>
+        </b-form>
+      </div>
     </b-modal>
 
     <div id="footer" class="pt-5">
@@ -338,6 +378,10 @@ export default {
         this.$bvModal.hide("modalPassword");
       });
     },
+    hideModal() {
+      this.resetModal();
+      this.$bvModal.hide("modalPassword");
+    },
   },
   mounted() {
     this.readData();
@@ -365,6 +409,10 @@ export default {
 #profile .d-flex #btnEditProfile {
   background-color: #151d65;
 }
+.form-row .cancel:hover {
+  background-color: #ffff !important;
+  color: #9b9ecb !important;
+}
 /*dropdown sewaktu udah login*/
 ::v-deep .dropdown-menu {
   border: none !important;
@@ -380,5 +428,9 @@ export default {
 }
 ::v-deep #datepicker:hover {
   background-color: #ffff !important;
+}
+.form-row .cancel:hover {
+  background-color: #ffff !important;
+  color: #9b9ecb !important;
 }
 </style>
