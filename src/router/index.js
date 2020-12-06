@@ -75,6 +75,13 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title
   next()
+  //masih kasar :'3
+  // if(to.name !='login' && !localStorage.getItem('token')){
+  //   next({
+  //     path:'/login',
+  //     query:{ redirect: to.fullPath}
+  //   })
+  // }else next()
 })
 
 export default router
