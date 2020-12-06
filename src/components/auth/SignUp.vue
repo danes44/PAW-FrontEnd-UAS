@@ -20,7 +20,7 @@
             <b-nav-item to="/" class="pr-3">Home</b-nav-item>
             <b-nav-item href="/products" class="pr-3">Products</b-nav-item>
             <b-nav-item href="/" class="pr-3">About Us</b-nav-item>
-            <b-button class="my-3 my-sm-0 px-3 font-weight-bold border-0" href="/login" style="background-color: #151D65;">Login</b-button>
+            <b-button class="my-3 my-sm-0 px-3 font-weight-bold border-0" to="/login" style="background-color: #151D65;">Login</b-button>
           </b-navbar-nav>
         </b-collapse>
 
@@ -65,7 +65,7 @@
                   <b-input-group-prepend is-text class="text">
                     <b-icon icon="lock-fill"></b-icon>
                   </b-input-group-prepend>
-                  <b-form-input type="password" v-b-tooltip title='Password min. 6 characters' placeholder="Password" minlength="9"></b-form-input>
+                  <b-form-input type="password"  placeholder="Password" minlength="9"></b-form-input>
                 </b-input-group>
               </b-col>
 
@@ -74,7 +74,7 @@
                   <b-input-group-prepend is-text class="text">
                     <b-icon icon="telephone-fill"></b-icon>
                   </b-input-group-prepend>
-                  <b-form-input type="text" v-b-tooltip title='Number must started with "08"' placeholder="08XXXXXXXXXX" pattern="^08[0-9]{8,10}" minlength="9" maxlength="13"></b-form-input>
+                  <b-form-input type="text"  placeholder="08XXXXXXXXXX" pattern="^08[0-9]{8,10}" minlength="9" maxlength="13"></b-form-input>
                 </b-input-group>
               </b-col>
             </b-form-row>

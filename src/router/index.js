@@ -65,6 +65,12 @@ const router = new VueRouter({
       component: importComponent('profile/Profile'),
     },
     {
+      path: "/edit-profile",
+      name: "editProfile",
+      meta: {title: 'Edit Profile - Froster'},
+      component: importComponent('profile/EditProfile'),
+    },
+    {
       path: '*',
       redirect: '/'
     },

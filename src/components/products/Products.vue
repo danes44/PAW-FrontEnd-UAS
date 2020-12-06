@@ -40,7 +40,7 @@
                    <b-card-body class="p-0">
                      <b-card-text >
                        <h6 class="font-weight-bold"> {{ food.name }} </h6>
-                       <h6 class="font-weight-bold"> Rp. {{ food.price }}</h6>
+                       <h6 class="font-weight-bold"> Rp. {{ formatPrice(food.price) }}</h6>
                        Stok : {{ food.stock }}
                      </b-card-text>
                    </b-card-body>
@@ -76,14 +76,20 @@
     data(){
       return {
        foods:[
-         { name: 'Champs Chicken Ball', price: 200000, stock: 52, image: 'Group 612.png'},
-         { name: 'Fiesta Chicken Nuggets', price: 400000, stock: 53, image: 'Group 613.png'},
-         { name: 'Champs Chicken Sausage', price: 240000, stock: 25, image: 'Group 616.png'},
-         { name: 'Fiesta Chicken Slice', price: 360000, stock: 15, image: 'Group 619.png'},
-         { name: 'Fiesta Keecho', price: 400000, stock: 45, image: 'Group 617.png'},
+         { name: 'Champs Chicken Ball', price: 20000, stock: 52, image: 'Group 612.png'},
+         { name: 'Fiesta Chicken Nuggets', price: 40000, stock: 53, image: 'Group 613.png'},
+         { name: 'Champs Chicken Sausage', price: 24000, stock: 25, image: 'Group 616.png'},
+         { name: 'Fiesta Chicken Slice', price: 36000, stock: 15, image: 'Group 619.png'},
+         { name: 'Fiesta Keecho', price: 40000, stock: 45, image: 'Group 617.png'},
        ],
 
       }
+    },
+    methods:{
+      formatPrice(value) {
+        let val = (value/1).toFixed(0).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+      },
     }
   }
 </script>

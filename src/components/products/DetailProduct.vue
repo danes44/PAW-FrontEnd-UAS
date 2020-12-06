@@ -53,7 +53,7 @@
               <h1><b>{{ foods.name }}</b></h1>
             </b-row>
             <b-row class="py-2">
-              <h4>Rp. {{ foods.price }}</h4>
+              <h4>Rp. {{ formatPrice(foods.price) }}</h4>
             </b-row>
             <b-row>
               <p>{{ foods.desc }}</p>
@@ -126,11 +126,13 @@
             name: 'Champs Chicken Ball', price: 200000, stock: 52, image: 'Group 612.png', desc: 'Delicious Beef Steak'
         },
         quantity: 1,
-
-
       }
     },
     methods:{
+      formatPrice(value) {
+        let val = (value/1).toFixed(0).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+      },
       plus(){
         if(this.foods.stock>this.quantity)
         {

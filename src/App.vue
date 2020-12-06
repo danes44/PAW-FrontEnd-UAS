@@ -17,6 +17,28 @@
     color: #151D65 !important;
     background-color: #f2f5f7 !important;
   }
+
+  /*---------scrollbar-----------*/
+  /* Let's get this party started */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    display: none;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #151d65;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3d4cbf;
+    cursor: pointer;
+  }
+
+
   .navbar-light .navbar-brand {
     color: #151D65 !important;
   }
@@ -33,5 +55,20 @@
   .bg-info {
     background-color: #f2f5f7 !important;
   }
-
+  .input-group-text {
+    color: #151d65;
+    background-color: #F6F6F6!important;
+    border-color: #F6F6F6!important;
+    border-radius: .5rem 0 0 .5rem !important;
+  }
+  input {
+    color: #151d65;
+    background-color: #F6F6F6!important;
+    border: none !important;
+  }
+  .form-control {
+    border: 1px solid #f6f6f6;
+    border-radius: 0 .5rem .5rem 0 !important;
+    background-color: #F6F6F6!important;
+  }
 </style>

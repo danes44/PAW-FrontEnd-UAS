@@ -71,6 +71,11 @@
 <!--                    <div hidden> {{ totalArr.push(data.value) }} </div>-->
                     Rp. {{ formatPrice(data.value) }}
                   </template>
+                  <template #cell(actions)="row">
+                    <b-button id="btnDelete" variant="outline-danger" size="sm" @click="delete(row.item, row.index, $event.target)" class="mr-1">
+                      <b-icon icon="x" class="text-danger"></b-icon>
+                    </b-button>
+                  </template>
 <!--                  <template #cell(new)="data">-->
 <!--                    {{ data.value = 0 }}-->
 <!--                    {{ data.value = data.value + (data.item.price * data.item.quantity) }}-->
@@ -128,25 +133,53 @@
 
                 <b-form-row>
                   <b-form-group class="pr-3">
-                    <b-form-select v-model="selectedRegency" :options="optionsRegency"></b-form-select>
+                    <b-form-select v-model="selectedRegency" :options="optionsRegency"
+                        style="
+                        background-color: #F6F6F6!important;
+                        border: 1px solid #f6f6f6;
+                        border-radius: .5rem !important;"></b-form-select>
                   </b-form-group>
                   <b-form-group class="" v-if="this.selectedRegency == null">
-                    <b-form-select v-model="selectedSubdistrict" :options="optionsBantul"></b-form-select>
+                    <b-form-select v-model="selectedSubdistrict" :options="optionsBantul"
+                        style="
+                        background-color: #F6F6F6!important;
+                        border: 1px solid #f6f6f6;
+                        border-radius: .5rem !important;"></b-form-select>
                   </b-form-group>
                   <b-form-group class="" v-if="this.selectedRegency == 'bantul'">
-                    <b-form-select v-model="selectedSubdistrict" :options="optionsBantul"></b-form-select>
+                    <b-form-select v-model="selectedSubdistrict" :options="optionsBantul"
+                        style="
+                        background-color: #F6F6F6!important;
+                        border: 1px solid #f6f6f6;
+                        border-radius: .5rem !important;"></b-form-select>
                   </b-form-group>
                   <b-form-group class="" v-if="this.selectedRegency == 'gunungKidul'">
-                    <b-form-select v-model="selectedSubdistrict" :options="optionsBantul"></b-form-select>
+                    <b-form-select v-model="selectedSubdistrict" :options="optionsGunungKidul"
+                        style="
+                        background-color: #F6F6F6!important;
+                        border: 1px solid #f6f6f6;
+                        border-radius: .5rem !important;"></b-form-select>
                   </b-form-group>
                   <b-form-group class="" v-if="this.selectedRegency == 'kulonProgo'">
-                    <b-form-select v-model="selectedSubdistrict" :options="optionsBantul"></b-form-select>
+                    <b-form-select v-model="selectedSubdistrict" :options="optionsKulonProgo"
+                        style="
+                        background-color: #F6F6F6!important;
+                        border: 1px solid #f6f6f6;
+                        border-radius: .5rem !important;"></b-form-select>
                   </b-form-group>
                   <b-form-group class="" v-if="this.selectedRegency == 'sleman'">
-                    <b-form-select v-model="selectedSubdistrict" :options="optionsBantul"></b-form-select>
+                    <b-form-select v-model="selectedSubdistrict" :options="optionsSleman"
+                          style="
+                          background-color: #F6F6F6!important;
+                          border: 1px solid #f6f6f6;
+                          border-radius: .5rem !important;"></b-form-select>
                   </b-form-group>
                   <b-form-group class="" v-if="this.selectedRegency == 'yogyakarta'">
-                    <b-form-select v-model="selectedSubdistrict" :options="optionsBantul"></b-form-select>
+                    <b-form-select v-model="selectedSubdistrict" :options="optionsYogyakarta"
+                          style="
+                          background-color: #F6F6F6!important;
+                          border: 1px solid #f6f6f6;
+                          border-radius: .5rem !important;"></b-form-select>
                   </b-form-group>
                 </b-form-row>
 
@@ -159,6 +192,7 @@
                     <h6><b>Shipping Cost</b></h6>
                   </b-col>
                   <b-col md="6" sm="12" cols="12">
+                    <div hidden>{{ shippingCost() }}</div>
                     <h6>Rp. {{ this.shipping }}</h6>
                   </b-col>
                 </b-form-row>
@@ -211,7 +245,7 @@
                     </b-col>
                     <b-col md="6" class="mb-2 pr-0">
                       <b-input-group class="mb-3">
-                        <b-form-datepicker id="datepicker" v-model="dateExpired" class="mb-2"></b-form-datepicker>
+                        <b-form-datepicker id="datepicker" v-model="dateExpired" class="mb-2" style="color: inherit"></b-form-datepicker>
                       </b-input-group>
                     </b-col>
                   </b-form-row>
@@ -255,7 +289,7 @@
           { key: 'price', sortable:true},
           { key: 'quantity', sortable:true},
           { key: 'totalPrice', sortable:true},
-          // { key: 'new'}
+          { key: 'actions' },
         ],
         foods:[
           { name: 'Champs Chicken Ball', price: 200000, quantity: 2, totalPrice: 0, new:0 },
@@ -278,42 +312,56 @@
         ],
         optionsBantul: [
           { value: null, text: 'Please select an Sub District' },
+          { value: 'banguntapan', text: 'Banguntapan' },
+          { value: 'jetis', text: 'Jetis' },
+          { value: 'pleret', text: 'Pleret' },
+          { value: 'bambanglipuro', text: 'Bambanglipuro' },
+          { value: 'sewon', text: 'Sewon' },
+          { value: 'imogiri', text: 'Imogiri' },
+          { value: 'kretek', text: 'Kretek' },
+          { value: 'sanden', text: 'Sanden' },
+          { value: 'srandakan', text: 'Srandakan' },
+          { value: 'sedayu', text: 'Sedayu' },
+          { value: 'pandak', text: 'Pandak' },
+          { value: 'pajangan', text: 'Pajangan' },
+          { value: 'kasihan', text: 'Pajangan' },
+          { value: 'piyungan', text: 'Piyungan' },
           { value: 'bantul', text: 'Bantul' },
-          { value: 'gunungKidul', text: 'Gunung Kidul' },
-          { value: 'kulonProgo', text: 'Kulon Progo' },
-          { value: 'sleman', text: 'Sleman' },
-          { value: 'yogyakarta', text: 'Yogyakarta' },
+          { value: 'pundong', text: 'Pundong' },
+          { value: 'dlingo', text: 'Dlingo' },
+
+
         ],
         optionsGunungKidul: [
           { value: null, text: 'Please select an Sub District' },
-          { value: 'bantul', text: 'Bantul' },
-          { value: 'gunungKidul', text: 'Gunung Kidul' },
-          { value: 'kulonProgo', text: 'Kulon Progo' },
-          { value: 'sleman', text: 'Sleman' },
-          { value: 'yogyakarta', text: 'Yogyakarta' },
+          {value : "gedangsari", text: 'Gedangsari'},
+          {value : "girisubo" , text:'Girisubo'},
+          {value : "karangmojo" , text:'Karangmojo'},
+          {value : "ngawen" , text: "Ngawen"},
+          {value : "nglipar" , text: "Nglipar"},
+          {value : "paliyan" , text: "Paliyan"},
+          {value : "panggan" , text: "Panggang"},
+          {value : "patuk" , text:" Patuk"},
+          {value : "playen" , text:" Playenn"},
+          {value : "ponjong" , text: "Ponjong"},
+          {value : "purwosari" , text: "Purwosari"},
+          {value : "rongkop" , text: "Rongkop"},
+          {value : "semanu" , text: "Semanu"},
+          {value : "semin" , text:" Semin"},
+          {value : "anjungsari" , text: "anjungsari"},
+          {value : "tepus" , text: "Tepus"},
+          {value : "wonosari" , text: "Wonosari"},
         ],
         optionsKulonProgo: [
           { value: null, text: 'Please select an Sub District' },
-          { value: 'bantul', text: 'Bantul' },
-          { value: 'gunungKidul', text: 'Gunung Kidul' },
-          { value: 'kulonProgo', text: 'Kulon Progo' },
-          { value: 'sleman', text: 'Sleman' },
-          { value: 'yogyakarta', text: 'Yogyakarta' },
+          { value: 'progo', text: 'Progo' },
         ],
         optionsSleman: [
           { value: null, text: 'Please select an Sub District' },
-          { value: 'bantul', text: 'Bantul' },
-          { value: 'gunungKidul', text: 'Gunung Kidul' },
-          { value: 'kulonProgo', text: 'Kulon Progo' },
-          { value: 'sleman', text: 'Sleman' },
-          { value: 'yogyakarta', text: 'Yogyakarta' },
+          { value: 'babarsari', text: 'Babarsari' },
         ],
         optionsYogyakarta: [
           { value: null, text: 'Please select an Sub District' },
-          { value: 'bantul', text: 'Bantul' },
-          { value: 'gunungKidul', text: 'Gunung Kidul' },
-          { value: 'kulonProgo', text: 'Kulon Progo' },
-          { value: 'sleman', text: 'Sleman' },
           { value: 'yogyakarta', text: 'Yogyakarta' },
         ],
         selectedRegency: null,
@@ -328,7 +376,7 @@
     },
     methods: {
       formatPrice(value) {
-        let val = (value/1).toFixed(2).replace('.', ',')
+        let val = (value/1).toFixed(0).replace('.', ',')
         return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
       },
       getTotal () {
@@ -342,7 +390,21 @@
       },
       checkPayment(){
 
-      }
+      },
+      shippingCost(){
+        if (this.selectedRegency == 'yogyakarta')
+          this.shipping = 1000
+        else if (this.selectedRegency == 'bantul')
+          this.shipping = 2000
+        else if (this.selectedRegency == 'sleman')
+          this.shipping = 2000
+        else if (this.selectedRegency == 'gunungKidul')
+          this.shipping = 6000
+        else if (this.selectedRegency == 'kulonProgo')
+          this.shipping = 5000
+        else
+          this.shipping = 0
+      },
     },
   }
 </script>
@@ -375,5 +437,18 @@
   }
   ::v-deep #datepicker:hover{
     background-color: #ffff !important;
+  }
+  ::v-deep #btnDelete:hover{
+    transform: scale(1.05);
+    background-color:transparent !important;
+  }
+  ::v-deep #btnDelete{
+    transition: 0.3s ease-in-out;;
+  }
+  #cart .form-control {
+    background-color: #F6F6F6!important;
+    color: #151d65;
+    border: 1px solid #f6f6f6;
+    border-radius: .5rem !important;
   }
 </style>

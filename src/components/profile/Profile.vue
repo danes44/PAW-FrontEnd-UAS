@@ -51,7 +51,7 @@
             <b-button id="btnChangePassword" v-b-modal="'modalPassword'" class="py-3 px-4 mx-4 align-self-center border-0 font-weight-bold" style="border-radius: .5rem">
               <b-icon class="mr-3" icon="lock-fill"></b-icon>Change Password
             </b-button>
-            <b-button id="btnEditProfile" to="" class="py-3 px-4 align-self-center border-0 font-weight-bold" style="border-radius: .5rem">
+            <b-button id="btnEditProfile" to="/edit-profile" class="py-3 px-4 align-self-center border-0 font-weight-bold" style="border-radius: .5rem">
               <b-icon class="mr-3" icon="pencil-fill"></b-icon>Edit Profile
             </b-button>
           </div>
@@ -69,41 +69,57 @@
       </b-container>
     </div>
 
-    <b-modal
-        id="modalPassword"
-        ref="modal"
-        title="Submit Your Name"
-        @show="resetModal"
-        @hidden="resetModal"
-        @ok="handleOk"
+    <b-modal id="modalPassword" modal-class="border-0 rounded" ref="modal"
+        hide-header
+        hide-footer
     >
-      <b-form ref="form" @submit.stop.prevent="handleSubmit">
-        <b-form-group
-            :state="state"
-            invalid-feedback="Old Password is Required"
-        >
-          <b-form-input
-              id="name-input"
-              v-model="oldPassword"
+      <div class="px-4">
+        <h3 class="py-5 text-center"><b>Change Password</b></h3>
+        <b-form ref="form" @submit.stop.prevent="handleSubmit">
+          <b-form-group
               :state="state"
-              min="6"
-              required
-          ></b-form-input>
-        </b-form-group>
+              invalid-feedback="Old password is required"
+          class="pb-1 border-0">
+            <b-input-group class="">
+              <b-input-group-prepend is-text class="text">
+                <b-icon icon="lock-fill"></b-icon>
+              </b-input-group-prepend>
+              <b-form-input placeholder="Old Password"
+                            v-model="oldPassword"
+                            :state="state"
+                            min="6"
+                            required type="password"
+                            class="border-0"></b-form-input>
+            </b-input-group>
+          </b-form-group>
 
-        <b-form-group
-            :state="state"
-            invalid-feedback="New Password is Required"
-        >
-          <b-form-input
-              id="name-input"
-              v-model="newPassword"
+          <b-form-group
               :state="state"
-              min="6"
-              required
-          ></b-form-input>
-        </b-form-group>
-      </b-form>
+              invalid-feedback="New password is required">
+            <b-input-group>
+              <b-input-group-prepend is-text class="text">
+                <b-icon icon="lock-fill"></b-icon>
+              </b-input-group-prepend>
+              <b-form-input placeholder="New Password"
+                            v-model="newPassword"
+                            :state="state"
+                            min="6"
+                            required type="password"></b-form-input>
+            </b-input-group>
+          </b-form-group>
+
+          <b-form-row class="pt-5 pb-3 float-right">
+            <b-button @click="hideModal" class="cancel text-center py-2 px-5 border-0 font-weight-bold"
+                      style="background-color: white;text-decoration: none; color: #151d65;">
+              Cancel
+            </b-button>
+            <b-button @click="handleOk" class="text-center py-2 px-5 font-weight-bold"
+                      style="background-color: #151d65; border-radius: .5rem">
+              Save
+            </b-button>
+          </b-form-row>
+        </b-form>
+      </div>
     </b-modal>
 
     <div id="footer" class="pt-5">
@@ -128,7 +144,7 @@
     name: "Profile",
     data(){
       return {
-        name:'',
+        name:'Frumentius',
         email:'frumentius@gmail.com',
         phone:'0831241051309',
         address:'Jalan Di Rumah',
@@ -148,6 +164,10 @@
       //   }
       //   return 'Old Password is required'
       // },
+      hideModal(){
+        this.resetModal()
+        this.$bvModal.hide("modalPassword")
+      },
       checkFormValidity() {
         const valid = this.$refs.form.checkValidity()
         this.state = valid
@@ -169,7 +189,7 @@
         if (!this.checkFormValidity()) {
           return
         }
-
+        this.resetModal()
         // Push the name to submitted names
         this.password = this.newPassword
         // Hide the modal manually
@@ -198,6 +218,10 @@
   #profile .d-flex #btnChangePassword:hover {
     background-color: #c63f43 !important;
   }
+  .form-row .cancel:hover {
+    background-color: #ffff !important;
+    color: #9b9ecb !important;
+  }
   #profile .d-flex #btnEditProfile {
     background-color: #151D65;
   }
@@ -214,7 +238,10 @@
   ::v-deep .dropdown-item:hover {
     background-color: #dcdeec !important;
   }
-  ::v-deep #datepicker:hover{
-    background-color: #ffff !important;
+  ::v-deep #modalPassword{
+    border: none !important;
+    border-radius: 1rem !important;
   }
+
+
 </style>
