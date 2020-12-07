@@ -113,30 +113,44 @@
                   </template>
                   <template #cell(quantity)="data">
                     <!--                    <b-col md="6" sm="2">-->
-                    <b-form-input
+                    <!-- <b-form-input
                       class="mr-n5 border-0"
                       type="number"
                       @change="updateOrder(data)"
                       v-model="data.value"
-                    ></b-form-input>
-
+                    ></b-form-input> -->
 
                     <!-- +- bug karna bisa diketik -->
-                    <!-- <b-input-group class="mx-auto">
-                      <b-col>
-                        <b-input-group-prepend>
-                          <b-btn variant="outline-info">-</b-btn>
+                    <b-input-group class="no-gutters">
+                      <b-col cols="0">
+                        <b-input-group-prepend class="mr-0">
+                          <b-btn
+                            @click="updateOrderMinus(data)"
+                            variant="outline-info"
+                            >-</b-btn
+                          >
                         </b-input-group-prepend>
                       </b-col>
                       <b-col>
-                         <b-form-input type="number" min="0.00"></b-form-input>
+                        <b-form-input
+                          type="number"
+                          min="1"
+                          size="sm"
+                          class="mx-1 border-0"
+                          readonly
+                          v-model="data.value"
+                        ></b-form-input>
                       </b-col>
-                      <b-col>
-                        <b-input-group-append>
-                          <b-btn variant="outline-secondary">+</b-btn>
+                      <b-col cols="5">
+                        <b-input-group-append class="ml-0">
+                          <b-btn
+                            @click="updateOrderPlus(data)"
+                            variant="outline-secondary"
+                            >+</b-btn
+                          >
                         </b-input-group-append>
                       </b-col>
-                    </b-input-group> -->
+                    </b-input-group>
                     <!--                    </b-col>-->
                   </template>
                   <template #cell(total)="data">
@@ -220,13 +234,15 @@
 
                 <b-form-row>
                   <b-form-group class="pr-3">
-                    <b-form-select
-                      v-model="selectedRegency"
-                      :options="optionsRegency"
-                    ></b-form-select>
+                    <b-select >
+                      <option v-for="regions in region" :key="regions.region"
+                      @click="readDistrict(regions)">
+                        {{ regions.region }}
+                      </option>
+                    </b-select>
                   </b-form-group>
-                  <b-form-group class="" v-if="this.selectedRegency == null">
-                    <b-form-select
+                  <!-- <b-form-group class="" v-if="this.selectedRegency == null"> -->
+                    <!-- <b-form-select
                       v-model="selectedSubdistrict"
                       :options="optionsBantul"
                     ></b-form-select>
@@ -275,7 +291,7 @@
                       v-model="selectedSubdistrict"
                       :options="optionsBantul"
                     ></b-form-select>
-                  </b-form-group>
+                  </b-form-group> -->
                 </b-form-row>
 
                 <b-form-row>
@@ -527,6 +543,9 @@ export default {
       dateExpired: null,
       order: [],
       orders: null,
+      ongkir: [],
+      region: [],
+      subDistrict: [],
     };
   },
   methods: {
@@ -543,9 +562,62 @@ export default {
           this.order = response.data.data;
           this.setPrice(this.order);
           //console log bisa dihapus nnti kalo dah kelar
-          console.log(this.order);
+          // console.log(this.order);
         });
     },
+    readDataRegion() {
+      ///tinggal hapus local storage di set pas login
+      var url = this.$api + "/showregion";
+      this.$http
+        .get(url, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          console.log(response.data.data);
+          // this.readDataSubDistrict();
+          this.region = response.data.data;
+          // this.setRegion(this.region);
+          //console log bisa dihapus nnti kalo dah kelar
+          // console.log(this.ongkir);
+        });
+    },
+    readDistrict(region) {
+      console.log(region.region)
+      ///tinggal hapus local storage di set pas login
+      var url = this.$api + "/showdistrict/"+region.region;
+      this.$http
+        .get(url, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          console.log(response.data.data);
+          // this.readDataSubDistrict();
+          this.subDistrict = response.data.data;
+          // this.setRegion(this.region);
+          //console log bisa dihapus nnti kalo dah kelar
+          // console.log(this.ongkir);
+        });
+    },
+    // readDataOngkir() {
+    //   var url = this.$api + "/showdistrict/" + this.region;
+    //   this.$http
+    //     .get(url, {
+    //       headers: {
+    //         Authorization: "Bearer " + localStorage.getItem("token"),
+    //       },
+    //     })
+    //     .then((response) => {
+    //       console.log(response.data.data);
+    //       this.ongkir = response.data.data;
+    //       // this.setRegion(this.region);
+    //       //console log bisa dihapus nnti kalo dah kelar
+    //       // console.log(this.ongkir);
+    //     });
+    // },
     formatPrice(value) {
       let val = (value / 1).toFixed(2).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -558,12 +630,48 @@ export default {
       }
       console.log(this.foods.length);
     },
-    updateOrder(data) {
+    updateOrderMinus(data) {
+      this.orders = data.item;
+      if (this.orders.quantity > 1) {
+        this.uOrder.append("nama_product", this.orders.nama_product);
+        this.uOrder.append("harga_product", this.orders.harga_product);
+        this.uOrder.append("quantity", -1);
+        this.uOrder.append("id_user", this.orders.id_user);
+        this.uOrder.append("id_product", this.orders.id_product);
+        console.log(this.uOrder);
+
+        var url = this.$api + "/order";
+        this.load = true;
+        this.$http
+          .post(url, this.uOrder, {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          })
+          .then((response) => {
+            this.error_message = response.data.message;
+            this.color = "green";
+            this.snackbar = true;
+            this.load = false;
+            this.readDataOrder();
+            // this.close();
+            // this.readData(); //mengambil data
+            // this.resetForm();
+          })
+          .catch((error) => {
+            this.error_message = error.response.data.message;
+            this.color = "red";
+            this.snackbar = true;
+            this.load = false;
+          });
+      }
+    },
+    updateOrderPlus(data) {
       this.orders = data.item;
 
       this.uOrder.append("nama_product", this.orders.nama_product);
       this.uOrder.append("harga_product", this.orders.harga_product);
-      this.uOrder.append("quantity", this.orders.quantity);
+      this.uOrder.append("quantity", 1);
       this.uOrder.append("id_user", this.orders.id_user);
       this.uOrder.append("id_product", this.orders.id_product);
       console.log(this.uOrder);
@@ -661,7 +769,7 @@ export default {
       //     this.load = false;
       //   });
       console.log(localStorage.getItem("id"));
-      console.log(localStorage.getItem("token"));
+      // console.log(localStorage.getItem("token"));
     },
     deleteOrder(data) {
       //menghapus data order
@@ -694,6 +802,8 @@ export default {
   mounted() {
     this.readDataUser();
     this.readDataOrder();
+    // this.readDataOngkir();
+    this.readDataRegion();
   },
 };
 </script>
