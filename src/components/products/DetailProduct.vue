@@ -36,7 +36,14 @@
               >Products</b-nav-item
             >
             <b-nav-item href="/" class="pr-3">About Us</b-nav-item>
-            <b-nav-item-dropdown right>
+            <b-button
+              v-if="id === null"
+              class="my-3 my-sm-0 px-3 font-weight-bold border-0"
+              to="/login"
+              style="background-color: #151d65"
+              >Login</b-button
+            >
+            <b-nav-item-dropdown right v-if="id!=null">
               <template #button-content>
                 <b-img
                   v-if="id === null"
@@ -270,7 +277,7 @@ export default {
     cekAmount() {
       if (
         this.products.stok_product >= 1 &&
-        this.products.stok_product >= this.quantity
+        this.products.stok_product >= this.quantity && localStorage.getItem('id')!=null
       ) {
         // this.foods.stock = this.foods.stock - this.quantity;
         this.save();
