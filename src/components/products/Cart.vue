@@ -80,7 +80,10 @@
               <b-dropdown-item href="/edit-profile" class="text-center"
                 >Edit Profile</b-dropdown-item
               >
-              <b-dropdown-item href="#" @click="logout" class="text-center text-danger"
+              <b-dropdown-item
+                href="#"
+                @click="logout"
+                class="text-center text-danger"
                 >Sign Out</b-dropdown-item
               >
             </b-nav-item-dropdown>
@@ -102,10 +105,10 @@
                   hover
                   show-empty
                   borderless
-                  :items="foods"
+                  :items="order"
                   :fields="fields"
                 >
-                  <template #cell(price)="data">
+                  <template #cell(harga_product)="data">
                     Rp. {{ formatPrice(data.value) }}
                   </template>
                   <template #cell(quantity)="data">
@@ -113,16 +116,46 @@
                     <b-form-input
                       class="mr-n5 border-0"
                       type="number"
+                      @change="updateOrder(data)"
                       v-model="data.value"
                     ></b-form-input>
+
+
+                    <!-- +- bug karna bisa diketik -->
+                    <!-- <b-input-group class="mx-auto">
+                      <b-col>
+                        <b-input-group-prepend>
+                          <b-btn variant="outline-info">-</b-btn>
+                        </b-input-group-prepend>
+                      </b-col>
+                      <b-col>
+                         <b-form-input type="number" min="0.00"></b-form-input>
+                      </b-col>
+                      <b-col>
+                        <b-input-group-append>
+                          <b-btn variant="outline-secondary">+</b-btn>
+                        </b-input-group-append>
+                      </b-col>
+                    </b-input-group> -->
                     <!--                    </b-col>-->
                   </template>
-                  <template #cell(totalPrice)="data">
+                  <template #cell(total)="data">
                     <div hidden>
-                      {{ (data.value = data.item.price * data.item.quantity) }}
+                      <!-- {{ (data.value = data.item.price * data.item.quantity) }} -->
                     </div>
                     <!--                    <div hidden> {{ totalArr.push(data.value) }} </div>-->
                     Rp. {{ formatPrice(data.value) }}
+                  </template>
+                  <template #cell(actions)="data">
+                    <b-button
+                      id="btnDelete"
+                      variant="outline-danger"
+                      size="sm"
+                      @click="deleteOrder(data)"
+                      class="mr-1"
+                    >
+                      <b-icon icon="x" class="text-danger"></b-icon>
+                    </b-button>
                   </template>
                   <!--                  <template #cell(new)="data">-->
                   <!--                    {{ data.value = 0 }}-->
@@ -136,7 +169,7 @@
                   <b>Subtotal</b>
                 </b-col>
                 <b-col md="3" sm="12" class="pr-5">
-                  Rp. {{ this.subtotal }}
+                  Rp. {{ formatPrice(this.subtotal) }}
                 </b-col>
               </b-row>
 
@@ -144,7 +177,9 @@
                 <b-col md="3" sm="12" class="pr-3">
                   <b>Tax (10%)</b>
                 </b-col>
-                <b-col md="3" sm="12" class="pr-5"> Rp. {{ this.tax }} </b-col>
+                <b-col md="3" sm="12" class="pr-5">
+                  Rp. {{ formatPrice(this.tax) }}
+                </b-col>
               </b-row>
 
               <b-row class="py-0 pt-2">
@@ -152,7 +187,7 @@
                   <b>Shipping Cost</b>
                 </b-col>
                 <b-col md="3" sm="12" class="pr-5">
-                  Rp. {{ this.shipping }}
+                  Rp. {{ formatPrice(this.shipping) }}
                 </b-col>
               </b-row>
 
@@ -163,7 +198,7 @@
                   <b>Total Order</b>
                 </b-col>
                 <b-col md="3" sm="12" class="pr-5 pb-3">
-                  <b>Rp. {{ this.shipping + this.tax + this.subtotal }}</b>
+                  <b>Rp. {{ formatPrice(this.grantTotal) }}</b>
                 </b-col>
                 <b-col md="6" sm="12" class="">
                   <b-button
@@ -389,20 +424,21 @@ export default {
   name: "Cart",
   data() {
     return {
-      id:null,
-      token:null,
+      id: null,
+      token: null,
       load: false,
       snackbar: false,
       error_message: "",
       fields: [
-        { key: "name", sortable: true },
-        { key: "price", sortable: true },
+        { key: "nama_product", sortable: true },
+        { key: "harga_product", sortable: true },
         { key: "quantity", sortable: true },
-        { key: "totalPrice", sortable: true },
-        // { key: 'new'}
+        { key: "total", sortable: true },
+        { key: "actions" },
       ],
       user: new FormData(),
       users: [],
+      uOrder: new FormData(),
       form: {
         name: null,
         email: null,
@@ -486,11 +522,30 @@ export default {
       subtotal: 0,
       shipping: 0,
       tax: 0,
+      grantTotal: 0,
       totalArr: [],
       dateExpired: null,
+      order: [],
+      orders: null,
     };
   },
   methods: {
+    readDataOrder() {
+      ///tinggal hapus local storage di set pas login
+      var url = this.$api + "/orderuser/" + localStorage.getItem("id");
+      this.$http
+        .get(url, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          this.order = response.data.data;
+          this.setPrice(this.order);
+          //console log bisa dihapus nnti kalo dah kelar
+          console.log(this.order);
+        });
+    },
     formatPrice(value) {
       let val = (value / 1).toFixed(2).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -503,7 +558,42 @@ export default {
       }
       console.log(this.foods.length);
     },
-     readDataUser() {
+    updateOrder(data) {
+      this.orders = data.item;
+
+      this.uOrder.append("nama_product", this.orders.nama_product);
+      this.uOrder.append("harga_product", this.orders.harga_product);
+      this.uOrder.append("quantity", this.orders.quantity);
+      this.uOrder.append("id_user", this.orders.id_user);
+      this.uOrder.append("id_product", this.orders.id_product);
+      console.log(this.uOrder);
+
+      var url = this.$api + "/order";
+      this.load = true;
+      this.$http
+        .post(url, this.uOrder, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          this.error_message = response.data.message;
+          this.color = "green";
+          this.snackbar = true;
+          this.load = false;
+          this.readDataOrder();
+          // this.close();
+          // this.readData(); //mengambil data
+          // this.resetForm();
+        })
+        .catch((error) => {
+          this.error_message = error.response.data.message;
+          this.color = "red";
+          this.snackbar = true;
+          this.load = false;
+        });
+    },
+    readDataUser() {
       this.id = localStorage.getItem("id");
       console.log(this.id);
       this.token = localStorage.getItem("token");
@@ -521,6 +611,18 @@ export default {
           this.form.email = this.users.email;
           this.form.image = this.users.image;
         });
+    },
+    setPrice(order) {
+      this.subtotal = 0;
+      this.tax = 0;
+      this.grantTotal = 0;
+      for (let index = 0; index < order.length; index++) {
+        this.subtotal = order[index].total + this.subtotal;
+      }
+      this.tax = this.subtotal * 0.1;
+      //shipping belom
+      this.shipping = 0;
+      this.grantTotal = this.subtotal + this.tax + this.shipping;
     },
     logout() {
       //sementara gini dlu method post logoutnya aneh :3
@@ -561,10 +663,37 @@ export default {
       console.log(localStorage.getItem("id"));
       console.log(localStorage.getItem("token"));
     },
+    deleteOrder(data) {
+      //menghapus data order
+      console.log(data);
+      var url = this.$api + "/order/" + data.item.id;
+      //data dihapus berdasarkan id
+      this.$http
+        .delete(url, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          this.error_message = response.data.message;
+          this.color = "green";
+          this.snackbar = true;
+          this.load = false;
+          // this.setPrice(this.order);
+          this.readDataOrder(); //mengambildata
+        })
+        .catch((error) => {
+          this.error_message = error.data.message;
+          this.color = "red";
+          this.snackbar = true;
+          this.load = false;
+        });
+    },
     checkPayment() {},
   },
   mounted() {
     this.readDataUser();
+    this.readDataOrder();
   },
 };
 </script>
