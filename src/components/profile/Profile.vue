@@ -75,7 +75,7 @@
               <b-dropdown-item href="/cart" class="text-center"
                 >Cart</b-dropdown-item
               >
-              <b-dropdown-item href="#" class="text-center"
+              <b-dropdown-item href="/edit-profile" class="text-center"
                 >Edit Profile</b-dropdown-item
               >
               <b-dropdown-item
@@ -120,7 +120,7 @@
             </b-button>
             <b-button
               id="btnEditProfile"
-              to=""
+              to="/edit-profile"
               class="py-3 px-4 align-self-center border-0 font-weight-bold"
               style="border-radius: 0.5rem"
             >
@@ -128,7 +128,7 @@
             </b-button>
           </div>
           <h1 class="pt-3">
-            <b> {{ this.name }} </b>
+            <b> {{ form.name }} </b>
           </h1>
           <h5 class="pt-3">
             <b>Email Address</b>
@@ -148,6 +148,7 @@
       ref="modal"
       hide-header
       hide-footer
+      centered
     >
       <div class="px-4">
         <h3 class="py-5 text-center"><b>Change Password</b></h3>
@@ -163,8 +164,8 @@
               </b-input-group-prepend>
               <b-form-input
                 placeholder="Old Password"
-                v-model="oldPassword"
-                :state="state"
+                v-model="formPassword.password"
+                :state="state"      
                 min="6"
                 required
                 type="password"
@@ -183,7 +184,26 @@
               </b-input-group-prepend>
               <b-form-input
                 placeholder="New Password"
-                v-model="newPassword"
+                v-model="formPassword.newPassword"
+                :state="state"
+                min="6"
+                required
+                type="password"
+              ></b-form-input>
+            </b-input-group>
+          </b-form-group>
+
+          <b-form-group
+            :state="state"
+            invalid-feedback="Confirm password is required"
+          >
+            <b-input-group>
+              <b-input-group-prepend is-text class="text">
+                <b-icon icon="lock-fill"></b-icon>
+              </b-input-group-prepend>
+              <b-form-input
+                placeholder="Confirm Password"
+                v-model="formPassword.confirmPassword"
                 :state="state"
                 min="6"
                 required
@@ -205,7 +225,7 @@
               Cancel
             </b-button>
             <b-button
-              @click="handleOk"
+              @click="updatePassword"
               class="text-center py-2 px-5 font-weight-bold"
               style="background-color: #151d65; border-radius: 0.5rem"
             >
@@ -261,6 +281,8 @@ export default {
   name: "Profile",
   data() {
     return {
+      id:null,
+      token:null,
       name: "",
       email: "frumentius@gmail.com",
       no_tlp: "0831241051309",
@@ -278,13 +300,18 @@ export default {
         alamat: "",
         image: null,
       },
+      formPassword: {
+        password: "",
+        newPassword: "",
+        confirmPassword: "",
+      },
     };
   },
   methods: {
     readData() {
-      var id = localStorage.getItem("id");
-      console.log(id);
-      var url = this.$api + "/user/" + id;
+      this.id = localStorage.getItem("id");
+      console.log(this.id);
+      var url = this.$api + "/user/" + this.id;
       this.$http
         .get(url, {
           headers: {
@@ -299,6 +326,41 @@ export default {
           this.form.image = this.users.image;
           this.form.no_tlp = this.users.no_tlp;
           this.form.alamat = this.users.alamat;
+        });
+    },
+    updatePassword() {
+      console.log(this.formPassword);
+      let newData = {
+        password: this.formPassword.password,
+        newPassword: this.formPassword.newPassword,
+        confirmPassword: this.formPassword.confirmPassword,
+      };
+      console.log(newData);
+      this.id = localStorage.getItem("id");
+      var url = this.$api + "/changepassword/" + this.id;
+      this.load = true;
+      this.$http
+        .put(url, newData, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          this.error_message = response.data.message;
+          this.color = "green";
+          this.snackbar = true;
+          this.load = false;
+          // this.close();
+          this.readData(); //mengambildata
+          // this.resetForm();
+          // this.inputType = "Tambah";
+          this.resetModal();
+        })
+        .catch((error) => {
+          this.error_message = error.response.data.message;
+          this.color = "red";
+          this.snackbar = true;
+          this.load = false;
         });
     },
     logout() {
@@ -355,9 +417,10 @@ export default {
       return valid;
     },
     resetModal() {
-      this.oldPassword = "";
-      this.newPassword = "";
-      this.state = null;
+      this.formPassword.password = "";
+      this.formPassword.newPassword = "";
+      this.formPassword.confirmPassword = "";
+      this.$bvModal.hide("modalPassword");
     },
     handleOk(bvModalEvt) {
       // Prevent modal from closing

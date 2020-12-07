@@ -83,7 +83,7 @@
               <b-dropdown-item href="/cart" class="text-center"
                 >Cart</b-dropdown-item
               >
-              <b-dropdown-item href="#" class="text-center"
+              <b-dropdown-item href="/edit-profile" class="text-center"
                 >Edit Profile</b-dropdown-item
               >
               <b-dropdown-item href="#" @click="logout" class="text-center text-danger"
@@ -117,7 +117,7 @@
             >
              <!-- v-bind:img-src="require('../../assets/' + food.image)" -->
               <b-link
-                to="/detail-product"
+                @click="toDetail(product)"
                 class="stretched-link"
                 style="text-decoration: none; color: inherit"
               >
@@ -223,6 +223,7 @@ export default {
       user: new FormData(),
       users: [],
       form: {
+        id:null,
         name: null,
         email: null,
         password: null,
@@ -264,6 +265,13 @@ export default {
         this.products = response.data.data
         console.log(this.products);
       })
+    },
+    toDetail(product){
+      localStorage.setItem('id_product',product.id);
+      console.log(localStorage.getItem('id_product'));
+      this.$router.push({
+        name: "detailProducts",
+      });
     },
     logout() {
       //sementara gini dlu method post logoutnya aneh :3

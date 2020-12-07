@@ -77,7 +77,7 @@
               <b-dropdown-item href="/cart" class="text-center"
                 >Cart</b-dropdown-item
               >
-              <b-dropdown-item href="#" class="text-center"
+              <b-dropdown-item href="/edit-profile" class="text-center"
                 >Edit Profile</b-dropdown-item
               >
               <b-dropdown-item href="#" @click="logout" class="text-center text-danger"

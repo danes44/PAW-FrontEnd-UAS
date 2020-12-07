@@ -77,10 +77,13 @@
               <b-dropdown-item href="/cart" class="text-center"
                 >Cart</b-dropdown-item
               >
-              <b-dropdown-item href="#" class="text-center"
+              <b-dropdown-item href="/edit-profile" class="text-center"
                 >Edit Profile</b-dropdown-item
               >
-              <b-dropdown-item href="#" @click="logout" class="text-center text-danger"
+              <b-dropdown-item
+                href="#"
+                @click="logout"
+                class="text-center text-danger"
                 >Sign Out</b-dropdown-item
               >
             </b-nav-item-dropdown>
@@ -96,20 +99,21 @@
             <b-img
               fluid
               class="rounded"
-              :src="require('../../assets/' + foods.image)"
+              :src="'http://127.0.0.1:8000' + products.gambar_product"
             ></b-img>
+            <!-- :src="require('../../assets/' + foods.image)" -->
           </b-col>
           <b-col md="6" sm="12" cols="12" class="mb-4 pr-5">
             <b-row>
               <h1>
-                <b>{{ foods.name }}</b>
+                <b>{{ products.nama_product }}</b>
               </h1>
             </b-row>
             <b-row class="py-2">
-              <h4>Rp. {{ foods.price }}</h4>
+              <h4>Rp. {{ products.harga_product }}</h4>
             </b-row>
             <b-row>
-              <p>{{ foods.desc }}</p>
+              <p>{{ products.deskripsi_product }}</p>
             </b-row>
             <b-row class="pt-4">
               <b-col md="6" sm="12" cols="12" class="mb-1 px-0"> </b-col>
@@ -119,7 +123,7 @@
               <b-row>
                 <b-col md="6" sm="12" cols="12" class="mb-4 px-0">
                   <h5><b>Stocks</b></h5>
-                  <h5>{{ foods.stock }} pcs</h5>
+                  <h5>{{ products.stok_product }} pcs</h5>
                 </b-col>
                 <b-col md="6" sm="12" cols="12" class="mb-4 px-0 pr-5">
                   <h5><b>Quantity</b></h5>
@@ -213,6 +217,7 @@ export default {
   name: "DetailProduct",
   data() {
     return {
+      id: null,
       busy: true,
       load: false,
       snackbar: false,
@@ -235,19 +240,40 @@ export default {
         confirmPassword: null,
         image: null,
       },
+      product: new FormData(),
+      products: [],
+      order: new FormData(),
       deleteId: "",
       editId: "",
     };
   },
   methods: {
+    readData() {
+      var id = localStorage.getItem("id_product");
+      var url = this.$api + "/product/" + id;
+      this.$http
+        .get(url, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          this.products = response.data.data;
+          console.log(this.products);
+        });
+    },
     plus() {
-      if (this.foods.stock > this.quantity) {
+      if (this.products.stok_product > this.quantity) {
         this.quantity++;
       }
     },
     cekAmount() {
-      if (this.quantity >= 1 && this.foods.stock >= this.quantity) {
-        this.foods.stock = this.foods.stock - this.quantity;
+      if (
+        this.products.stok_product >= 1 &&
+        this.products.stok_product >= this.quantity
+      ) {
+        // this.foods.stock = this.foods.stock - this.quantity;
+        this.save();
         router.push({ name: "cart" });
         console.log(this.foods.stock);
       }
@@ -272,6 +298,38 @@ export default {
           this.form.name = this.users.name;
           this.form.email = this.users.email;
           this.form.image = this.users.image;
+        });
+    },
+    save() {
+      this.order.append("nama_product", this.products.nama_product);
+      this.order.append("harga_product", this.products.harga_product);
+      this.order.append("quantity", this.quantity);
+      this.order.append("id_user", this.users.id);
+      this.order.append("id_product", this.products.id);
+      console.log(this.order);
+
+      var url = this.$api + "/order";
+      this.load = true;
+      this.$http
+        .post(url, this.order, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          this.error_message = response.data.message;
+          this.color = "green";
+          this.snackbar = true;
+          this.load = false;
+          // this.close();
+          // this.readData(); //mengambil data
+          // this.resetForm();
+        })
+        .catch((error) => {
+          this.error_message = error.response.data.message;
+          this.color = "red";
+          this.snackbar = true;
+          this.load = false;
         });
     },
     logout() {
@@ -316,6 +374,7 @@ export default {
   },
   mounted() {
     this.readDataUser();
+    this.readData();
   },
 };
 </script>
