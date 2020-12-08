@@ -45,7 +45,7 @@
                 ></b-img>
                 <b-img
                   v-else
-                  :src="'http://127.0.0.1:8000' + form.image"
+                  :src="'https://api.froster.tugasbesar.com' + form.image"
                   width="30"
                   left
                   class="mr-2"
@@ -62,7 +62,7 @@
                   ></b-img>
                   <b-img
                     v-else
-                    :src="'http://127.0.0.1:8000' + form.image"
+                    :src="'https://api.froster.tugasbesar.com' + form.image"
                     width="60"
                     class="my-2 rounded-circle align-items-center"
                   ></b-img>
@@ -98,7 +98,7 @@
         >
           <div class="d-flex flex-wrap">
             <b-img
-              :src="'http://127.0.0.1:8000' + form.image"
+              :src="'https://api.froster.tugasbesar.com' + form.image"
               width="200"
               class="mr-3 rounded-circle"
               v-if="form.image != null"
