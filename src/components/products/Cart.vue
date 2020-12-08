@@ -803,7 +803,38 @@ export default {
           this.load = false;
         });
     },
-    checkPayment() {},
+    checkPayment() {
+      console.log("test");
+      this.transaksi.append("id_user", localStorage.getItem("id"));
+      console.log(this.transaksi);
+
+      var url = this.$api + "/transaksi";
+      this.load = true;
+      this.$http
+        .post(url, this.transaksi, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          this.error_message = response.data.message;
+          this.color = "green";
+          this.snackbar = true;
+          this.load = false;
+          this.$router.push({
+            name: "products",
+          });
+          // this.close();
+          // this.readData(); //mengambil data
+          // this.resetForm();
+        })
+        .catch((error) => {
+          this.error_message = error.response.data.message;
+          this.color = "red";
+          this.snackbar = true;
+          this.load = false;
+        });
+    },
   },
   mounted() {
     this.readDataUser();
