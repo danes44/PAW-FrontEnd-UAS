@@ -14,7 +14,7 @@ Vue.config.productionTip = false
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 Vue.use(jsPDF)
 Vue.prototype.$http = axios;
-Vue.prototype.$api = 'http://127.0.0.1:8000/api';
+Vue.prototype.$api = 'https://api.froster.tugasbesar.com';
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)

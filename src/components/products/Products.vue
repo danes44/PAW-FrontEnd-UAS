@@ -53,7 +53,7 @@
                 ></b-img>
                 <b-img
                   v-else
-                  :src="'http://127.0.0.1:8000' + form.image"
+                  :src="'https://api.froster.tugasbesar.com' + form.image"
                   width="30"
                   left
                   class="mr-2"
@@ -70,7 +70,7 @@
                   ></b-img>
                   <b-img
                     v-else
-                    :src="'http://127.0.0.1:8000' + form.image"
+                    :src="'https://api.froster.tugasbesar.com' + form.image"
                     width="60"
                     class="my-2 rounded-circle align-items-center"
                   ></b-img>
@@ -112,7 +112,7 @@
           <!-- Gambar Product masih ambil dari local host -->
             <b-card
               class="h-100 no-gutters border-0 shadow rounded overflow-hidden mr-0"
-              v-bind:img-src="'http://127.0.0.1:8000' + product.gambar_product"
+              v-bind:img-src="'https://api.froster.tugasbesar.com' + product.gambar_product"
               style="max-width: 255px"
             >
              <!-- v-bind:img-src="require('../../assets/' + food.image)" -->
