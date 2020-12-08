@@ -34,7 +34,6 @@
             <h1 class="px-5 text-danger"><b>Ooopss...</b></h1>
             <p class="pt-3 px-5">Your account is not verified yet. Please verify your email
               by click on a link in your email.</p>
-            <p class="pt-1 px-5">Doesn't receive an email? <a href="" style="text-decoration: none">Resend</a> </p>
           </div>
 
         </b-card>
@@ -59,7 +58,25 @@
 
 <script>
   export default {
-    name: "Unverified"
+    name: "Unverified",
+     data() {
+    return {
+      load: false,
+      snackbar: false,
+      error_message: "",
+      color: "",
+      valid: false,
+      name:'',
+      email: '',
+      password: '',
+      no_tlp:'',
+    };
+  },
+  methods: {
+    resend(){
+      
+    }
+  },
   }
 </script>
 

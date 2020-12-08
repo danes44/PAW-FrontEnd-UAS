@@ -74,6 +74,42 @@ const router = new VueRouter({
       path: '*',
       redirect: '/'
     },
+    {
+      path: "/",
+      name: "admin",
+      meta: {title: 'Admin'},
+      component: importComponent('DashboardLayout'),
+      children: [
+          //Account
+          {
+              path: "/adminaccount",
+              name: "adminaccount",
+              meta: {title: 'Account - Admin'},
+              component: importComponent('admin/Account'),
+          },
+          // Products
+          {
+              path:"/adminproducts",
+              name: "adminproducts",
+              meta: {title: 'Product - Admin'},
+              component: importComponent('admin/Products'),
+          },
+          // Transaction
+          {
+              path:"/admintransaction",
+              name: "admintransaction",
+              meta: {title: 'Transaction - Admin'},
+              component: importComponent('admin/Transaction'),
+          },
+          // Location
+          {
+              path:"/adminlocation",
+              name: "adminlocation",
+              meta: {title: 'Location - Admin'},
+              component: importComponent('admin/Location'),
+          },
+      ]
+  },
   ],
 });
 
@@ -81,6 +117,13 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title
   next()
+  //masih kasar :'3
+  // if(to.name !='login' && !localStorage.getItem('token')){
+  //   next({
+  //     path:'/login',
+  //     query:{ redirect: to.fullPath}
+  //   })
+  // }else next()
 })
 
 export default router

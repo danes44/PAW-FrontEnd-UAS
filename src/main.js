@@ -5,19 +5,21 @@ import './plugins/fontawesome'
 import './plugins/bootstrap-vue'
 import App from './App.vue'
 import router from './router'
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-// import Axios from "axios";
+import axios from 'axios'
 
+import { jsPDF } from "jspdf";
+import 'jspdf-autotable';
 
 Vue.config.productionTip = false
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+Vue.use(jsPDF)
+Vue.prototype.$http = axios;
+Vue.prototype.$api = 'https://api.froster.tugasbesar.com/api';
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
-
-// vue.prototype.$http = axios;
-// Vue.prototype.$api =
 
 new Vue({
   router,

@@ -20,7 +20,7 @@
             <b-nav-item to="/" class="pr-3">Home</b-nav-item>
             <b-nav-item href="/products" class="pr-3">Products</b-nav-item>
             <b-nav-item href="/" class="pr-3">About Us</b-nav-item>
-            <b-button class="my-3 my-sm-0 px-3 font-weight-bold border-0" to="/login" style="background-color: #151D65;">Login</b-button>
+            <b-button class="my-3 my-sm-0 px-3 font-weight-bold border-0" href="/login" style="background-color: #151D65;">Login</b-button>
           </b-navbar-nav>
         </b-collapse>
 
@@ -39,13 +39,13 @@
           </b-row>
 
           <!--          SIGN UP FORM     -->
-          <b-form class="px-5 pt-5" @submit="makeToast" >
+          <b-form class="px-5 pt-5">
             <b-form-row class="mb-3">
-              <b-input-group  >
+              <b-input-group>
                 <b-input-group-prepend is-text class="text">
                   <b-icon icon="person-fill"></b-icon>
                 </b-input-group-prepend>
-                <b-form-input placeholder="Full Name" required class="was-validated"></b-form-input>
+                <b-form-input placeholder="Full Name" v-model="name"></b-form-input>
               </b-input-group>
             </b-form-row>
 
@@ -54,7 +54,7 @@
                 <b-input-group-prepend is-text class="text">
                   <b-icon icon="envelope-fill"></b-icon>
                 </b-input-group-prepend>
-                <b-form-input type="email" placeholder="Email" required></b-form-input>
+                <b-form-input type="email" placeholder="Email" v-model="email"></b-form-input>
               </b-input-group>
             </b-form-row>
 
@@ -65,7 +65,7 @@
                   <b-input-group-prepend is-text class="text">
                     <b-icon icon="lock-fill"></b-icon>
                   </b-input-group-prepend>
-                  <b-form-input type="password" placeholder="Password" minlength="6" required></b-form-input>
+                  <b-form-input type="password" v-b-tooltip title='Password min. 6 characters' v-model="password" placeholder="Password" minlength="9"></b-form-input>
                 </b-input-group>
               </b-col>
 
@@ -74,7 +74,7 @@
                   <b-input-group-prepend is-text class="text">
                     <b-icon icon="telephone-fill"></b-icon>
                   </b-input-group-prepend>
-                  <b-form-input type="text"  placeholder="08XXXXXXXXXX" pattern="^08[0-9]{8,10}" minlength="9" maxlength="13" required></b-form-input>
+                  <b-form-input type="text" v-b-tooltip title='Number must started with "08"' v-model="no_tlp" placeholder="08XXXXXXXXXX" pattern="^08[0-9]{8,10}" minlength="9" maxlength="13"></b-form-input>
                 </b-input-group>
               </b-col>
             </b-form-row>
@@ -305,7 +305,7 @@
             </b-form-row>
 
             <b-form-row class="pt-2">
-              <b-button type="submit" class="py-2 font-weight-bold border-0" block style="background-color: #151D65; border-radius: .5rem;">Sign Up</b-button>
+              <b-button class="py-2 font-weight-bold border-0" block style="background-color: #151D65; border-radius: .5rem;" @click="submit">Sign Up</b-button>
             </b-form-row>
 
             <b-form-row class="pt-2 pb-5">
@@ -335,24 +335,57 @@
 <script>
   export default {
     name: "SignUp",
-    data(){
-      return{
-
-      }
-    },
-    methods:{
-      makeToast() {
-        this.$bvToast.toast('Please verify your email. We have sent an email to you.', {
-          title: `LOGIN SUCCESS`,
-          variant: 'success',
-          toaster: 'b-toaster-top-center',
-          solid: true,
-          headerClass : 'text-center',
-          bodyClass : 'text-center'
+    data() {
+    return {
+      load: false,
+      snackbar: false,
+      error_message: "",
+      color: "",
+      valid: false,
+      name:'',
+      email: '',
+      password: '',
+      no_tlp:'',
+    };
+  },
+   methods: {
+    submit() {
+      console.log(this.email);
+      // if (this.$refs.form.validate()) {
+      //cek apakah yg akan dikirim sudah valid
+      this.load = true;
+      console.log(this.email);
+      console.log(this.password);
+       console.log(this.no_tlp);
+      console.log(this.name);
+      this.$http
+        .post(this.$api + "/register", {
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          no_tlp: this.no_tlp
         })
-        this.$router.push({path:"/login"})
-      }
-    }
+        .then((response) => {
+          // localStorage.setItem("id", response.data.user.id); //menyimpan id user yang sedang login
+          // localStorage.setItem("token", response.data.access_token); //menyimpan auth token
+          this.error_message = response.data.message;
+          this.color = "green";
+          this.snackbar = true;
+          this.load = false;
+          this.$router.push({
+            name: "unverified",
+          });
+        })
+        .catch((error) => {
+          this.error_message = error.response.data.message;
+          this.color = "red";
+          this.snackbar = true;
+          localStorage.removeItem("token");
+          this.load = false;
+        });
+      // }
+    },
+  },
   }
 </script>
 
