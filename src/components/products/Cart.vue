@@ -234,13 +234,27 @@
 
                 <b-form-row>
                   <b-form-group class="pr-3">
-                    <b-select >
-                      <option v-for="regions in region" :key="regions.region"
-                      @click="readDistrict(regions)">
+                    <b-select v-model="selectedRegency">
+                      <option v-for="regions in region" :key="regions.region" 
+                      @click="readDistrict(regions.region)">
                         {{ regions.region }}
                       </option>
                     </b-select>
                   </b-form-group>
+
+                  <b-form-group class="pr-3" >
+                    <b-select v-if="selectedRegency!=null" >
+                      <option v-for="(value,index) in subDistrict" :key="index" @click="shipping=value.harga_ongkir"
+                      >
+                        {{value.sub_district}}
+                       
+                      </option>
+                    </b-select>
+                  </b-form-group>
+
+               
+
+                 
                   <!-- <b-form-group class="" v-if="this.selectedRegency == null"> -->
                     <!-- <b-form-select
                       v-model="selectedSubdistrict"
@@ -545,7 +559,7 @@ export default {
       orders: null,
       ongkir: [],
       region: [],
-      subDistrict: [],
+      subDistrict: null,
     };
   },
   methods: {
@@ -561,8 +575,6 @@ export default {
         .then((response) => {
           this.order = response.data.data;
           this.setPrice(this.order);
-          //console log bisa dihapus nnti kalo dah kelar
-          // console.log(this.order);
         });
     },
     readDataRegion() {
@@ -576,17 +588,15 @@ export default {
         })
         .then((response) => {
           console.log(response.data.data);
-          // this.readDataSubDistrict();
           this.region = response.data.data;
-          // this.setRegion(this.region);
-          //console log bisa dihapus nnti kalo dah kelar
-          // console.log(this.ongkir);
+          console.log(this.selectedRegency);
+
         });
     },
     readDistrict(region) {
-      console.log(region.region)
-      ///tinggal hapus local storage di set pas login
-      var url = this.$api + "/showdistrict/"+region.region;
+
+
+      var url = this.$api + "/showdistrict/"+region;
       this.$http
         .get(url, {
           headers: {
@@ -594,13 +604,11 @@ export default {
           },
         })
         .then((response) => {
-          console.log(response.data.data);
-          // this.readDataSubDistrict();
-          this.subDistrict = response.data.data;
-          // this.setRegion(this.region);
-          //console log bisa dihapus nnti kalo dah kelar
-          // console.log(this.ongkir);
-        });
+          this.subDistrict = response.data;
+    
+        }
+        );
+    
     },
     // readDataOngkir() {
     //   var url = this.$api + "/showdistrict/" + this.region;
@@ -728,8 +736,6 @@ export default {
         this.subtotal = order[index].total + this.subtotal;
       }
       this.tax = this.subtotal * 0.1;
-      //shipping belom
-      this.shipping = 0;
       this.grantTotal = this.subtotal + this.tax + this.shipping;
     },
     logout() {
