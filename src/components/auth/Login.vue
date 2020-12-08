@@ -169,36 +169,55 @@ export default {
   },
   methods: {
     submit() {
-      console.log(this.email);
-      // if (this.$refs.form.validate()) {
-      //cek apakah yg akan dikirim sudah valid
-      this.load = true;
-      console.log(this.email);
-      console.log(this.password);
-      this.$http
-        .post(this.$api + "/login", {
-          email: this.email,
-          password: this.password,
-        })
-        .then((response) => {
-          localStorage.setItem("id", response.data.user.id); //menyimpan id user yang sedang login
-          localStorage.setItem("token", response.data.access_token); //menyimpan auth token
-          this.error_message = response.data.message;
-          this.color = "green";
-          this.snackbar = true;
-          this.load = false;
-          this.$router.push({
-            name: "products",
+      if (this.email === "admin@froster.com") {
+        this.$http
+          .post(this.$api + "/login", {
+            email: this.email,
+            password: this.password,
+          })
+          .then((response) => {
+            localStorage.setItem("id", response.data.user.id); //menyimpan id user yang sedang login
+            localStorage.setItem("token", response.data.access_token); //menyimpan auth token
+            this.error_message = response.data.message;
+            this.color = "green";
+            this.snackbar = true;
+            this.load = false;
+            this.$router.push({
+              name: "adminaccount",
+            });
+          })
+          .catch((error) => {
+            this.error_message = error.response.data.message;
+            this.color = "red";
+            this.snackbar = true;
+            localStorage.removeItem("token");
+            this.load = false;
           });
-        })
-        .catch((error) => {
-          this.error_message = error.response.data.message;
-          this.color = "red";
-          this.snackbar = true;
-          localStorage.removeItem("token");
-          this.load = false;
-        });
-      // }
+      } else {
+        this.$http
+          .post(this.$api + "/login", {
+            email: this.email,
+            password: this.password,
+          })
+          .then((response) => {
+            localStorage.setItem("id", response.data.user.id); //menyimpan id user yang sedang login
+            localStorage.setItem("token", response.data.access_token); //menyimpan auth token
+            this.error_message = response.data.message;
+            this.color = "green";
+            this.snackbar = true;
+            this.load = false;
+            this.$router.push({
+              name: "products",
+            });
+          })
+          .catch((error) => {
+            this.error_message = error.response.data.message;
+            this.color = "red";
+            this.snackbar = true;
+            localStorage.removeItem("token");
+            this.load = false;
+          });
+      }
     },
   },
 };

@@ -34,7 +34,6 @@
             <h1 class="px-5 text-danger"><b>Ooopss...</b></h1>
             <p class="pt-3 px-5">Your account is not verified yet. Please verify your email
               by click on a link in your email.</p>
-            <p class="pt-1 px-5">Doesn't receive an email? <a href="" style="text-decoration: none" @click="resend">Resend</a> </p>
           </div>
 
         </b-card>

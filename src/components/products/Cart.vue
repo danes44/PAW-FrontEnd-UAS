@@ -217,7 +217,6 @@
                 <b-col md="6" sm="12" class="">
                   <b-button
                     @click="checkPayment"
-                    type="submit"
                     class="float-right py-2 px-4 btn-primary border-0 font-weight-bold"
                     style="background-color: #151d65; border-radius: 0.5rem"
                     >Checkout</b-button
@@ -244,19 +243,14 @@
 
                   <b-form-group class="pr-3" >
                     <b-select v-if="selectedRegency!=null" >
-                      <option v-for="(value,index) in subDistrict" :key="index" @click="shipping=value.harga_ongkir"
+                      <option v-for="(value,index) in subDistrict" :key="index" @click="updateShipping(value)"
                       >
                         {{value.sub_district}}
-                       
                       </option>
                     </b-select>
                   </b-form-group>
-
-               
-
-                 
                   <!-- <b-form-group class="" v-if="this.selectedRegency == null"> -->
-                    <!-- <b-form-select
+                  <!-- <b-form-select
                       v-model="selectedSubdistrict"
                       :options="optionsBantul"
                     ></b-form-select>
@@ -454,6 +448,7 @@ export default {
   name: "Cart",
   data() {
     return {
+      kabupaten: null,
       id: null,
       token: null,
       load: false,
@@ -558,11 +553,16 @@ export default {
       order: [],
       orders: null,
       ongkir: [],
-      region: [],
-      subDistrict: null,
+      region: null,
+      subDistrict:null,
+      transaksi: new FormData(),
     };
   },
   methods: {
+    updateShipping(value){
+      this.shipping=value.harga_ongkir
+      this.readDataOrder();
+    },
     readDataOrder() {
       ///tinggal hapus local storage di set pas login
       var url = this.$api + "/orderuser/" + localStorage.getItem("id");
@@ -575,9 +575,11 @@ export default {
         .then((response) => {
           this.order = response.data.data;
           this.setPrice(this.order);
+          //console log bisa dihapus nnti kalo dah kelar
+          // console.log(this.order);
         });
     },
-    readDataRegion() {
+   readDataRegion() {
       ///tinggal hapus local storage di set pas login
       var url = this.$api + "/showregion";
       this.$http
@@ -590,11 +592,10 @@ export default {
           console.log(response.data.data);
           this.region = response.data.data;
           console.log(this.selectedRegency);
-
         });
     },
-    readDistrict(region) {
-
+     readDistrict(region) {
+       console.log(region)
 
       var url = this.$api + "/showdistrict/"+region;
       this.$http
@@ -605,7 +606,7 @@ export default {
         })
         .then((response) => {
           this.subDistrict = response.data;
-    
+                 console.log(this.shipping);
         }
         );
     
@@ -839,7 +840,6 @@ export default {
   mounted() {
     this.readDataUser();
     this.readDataOrder();
-    // this.readDataOngkir();
     this.readDataRegion();
   },
 };
